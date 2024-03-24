@@ -275,51 +275,37 @@
         <div class="column is-four-fifths">
           <h2 class="title is-3">Examples</h2>
           <br>
-          <div class="content has-text-justified">
-            
-            <div class="hero-body">
-              <video autoplay muted controls loop width="100%" height="auto">
-                <source src="./static/videos/stitched_output_trim.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-              <!-- <img src=".static/videos/plugs.gif" alt="Your GIF Description"> -->
-              <h2 class="subtitle has-text-centered">
-                Collision-avoidance with discrete collision detection (left) and continuous collision detection (right). These collision constraints are fully differentiable and work with of-the-shelf trajectory optimizers.
-              </h2>
-            </div>
 
-            <p>
-              This optimization problem is solved with a fast and parallelizable novel LML algorithm that updates the model in real time as new measurements come in.
-              The LML algorithm maintains a Gaussian belief of the model parameters $\hat{G} \in \mathbf{R}^{6 \times n_w}$, with a shared covariance $\Sigma \in \mathbf{S}_+^{n_w \times n_w}$.
-              <!-- The linearity of the contact model in $w$ allows us to parallelize this problem over the dimensions of the sensor.  -->
-            </p>
-            <p>
-              This belief is initialized with the regularization terms, as the following:
-              $$\begin{align}
-    \hat{G}_{0|0} &= 0, \quad \quad \quad \quad \quad  & \Sigma_{0|0} &= \operatorname{diag}(1 / b^2), \nonumber
-\end{align}$$
-              and each time a new measurement and feature vector is available, the LML algorithm is called to update this belief:
-            </p>
-            <!-- <p>
-                <script src="https://gist.github.com/kevin-tracy/f1f63fbfe6f3570463d4082d04fc75d3.js"></script>
-            </p> -->
-          </div>
-          <center>
-            <img src="./static/images/alg_1.png" alt="here is my description of the graph" width="400">
-          </center>
-          <br>
-          <div class="content has-text-justified">
-            <p>
-              This algorithm is entirely free of matrix inversions, meaning each operation is highly parallelizable on a GPU. As a result, the LML algorith scales extremeley well as the complexity of the model increases.
-              To demonstrate this, we show the runtime of the LML algorithm on a CPU and GPU as the sensor dimension and feature vector dimension increase.
-            </p>
-          </div>
-          <center>
-            <img src="./static/images/cpu_gpu_scaling.png" alt="here is my description of the graph">
-          </center>
-          <h2 class="subtitle has-text-centered">
-            CPU and GPU runtimes as the LML algorithm is run for various sensor/feature sizes. Despite the number of parameters in the model growing by a factor of 100, the GPU is able to run LML in nearly constant time. 
-         </h2>
+          <section class="hero teaser">
+            <div class="container is-max-desktop">
+              <div class="hero-body">
+                <video autoplay muted controls loop width="100%" height="auto">
+                  <source src="./static/videos/ballet.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+                <!-- <img src=".static/videos/plugs.gif" alt="Your GIF Description"> -->
+                <h2 class="subtitle has-text-centered">
+                  
+                </h2>
+              </div>
+            </div>
+          </section>
+
+          <section class="hero teaser">
+            <div class="container is-max-desktop">
+              <div class="hero-body">
+                <video autoplay muted controls loop width="100%" height="auto">
+                  <source src="./static/videos/hallway.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+                <!-- <img src=".static/videos/plugs.gif" alt="Your GIF Description"> -->
+                <h2 class="subtitle has-text-centered">
+                  Collision-avoidance with discrete collision detection (left) and continuous collision detection (right). These collision constraints are fully differentiable and work with of-the-shelf trajectory optimizers.
+                </h2>
+              </div>
+            </div>
+          </section>
+
         </div>
       </div>
       <br>
