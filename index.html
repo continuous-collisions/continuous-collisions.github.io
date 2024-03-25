@@ -253,7 +253,7 @@
 
             $$ r({\color{blue}{\tau}}) = {\color{blue}{\tau}} r^{(-)} + (1 - {\color{blue}{\tau}})r^{(+)} $$
 
-            With this, we can solve for the continuous collision information with the following optimization problem:
+            With this, we can solve for the minimum scaling required for $x$ to be an intersection between the two sets:
             $$
                 \begin{align}
                 \min_{x, {\color{red}{\alpha}}, {\color{blue}{\tau}}} \quad & {\color{red}{\alpha}} \nonumber \\
@@ -264,7 +264,7 @@
                 \end{align}
             $$
             which is a small convex optimization problem. If the optimal (minimum) scaling parameter ${\color{red}{\alpha}}$ is less than 1, then the two sets are in collision.
-            If this parameter is greater than 1, the two sets are not in collision. This optimization problem is indifferent to penetration, has no degenerate cases, and is fully differentiable with differentiable optimization techniques.
+            If this parameter is greater than 1, the two sets are not in collision. This optimization problem is indifferent to penetration, has no degenerate cases, and is fully differentiable.
           </p>
         </div>
         <!-- <center>
@@ -304,7 +304,7 @@
             $$
             As shown in the continuous collision detection optimization problem above, the parameter 
             we are concerned with, ${\color{red}{\alpha}}$, is the objective value of this problem. This means we can form smooth gradients of 
-            our continuous collision detection algorithm by simply taking a gradient of our Lagrangian function.
+            our continuous collision detection algorithm by simply taking a gradient of our Lagrangian function after we've solved our problem.
           </p>
         </div>
         <!-- <center>
