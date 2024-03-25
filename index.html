@@ -226,7 +226,7 @@
     <!-- Abstract. -->
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
-        <h2 class="title is-3">Optimization-Based Collision Detection</h2>
+        <h2 class="title is-3">Optimization-Based Continuous Collision Detection</h2>
         <div class="content has-text-justified">
           <p>
             We solve for continuous collision information in an optimization framework. Instead of solving for closest point between pairs of convex bodies, we instead parametrize the continuous collision problem with the following two variables:
@@ -236,29 +236,35 @@
             Your browser does not support the video tag.
           </video>
           <p>
-            For a convex set described in standard conic form as:
-            $$Ax + b \in \mathcal{K}$$ 
+            For a convex set described in standard conic form, we can arbitrarily scale it up and down with our
+             uniform scaling parameter ${\color{red}{\alpha}} \in \mathbf{R}_+$:
+            $$
+            \begin{align*}
+            {\color{black}{\underbrace{\color{black}{Ax + b \in \mathcal{K}}}_{{\color{black}{\text{original set}}}}}} & \quad \quad \quad \quad \quad {\color{red}{\underbrace{\color{black}{Ax + {\color{red}{\alpha}}b \in \mathcal{K}}}_{{\color{red}{\text{scaled set}}}}}}
+            \end{align*} 
+            $$
             <!-- $$\mathcal{X} = \{x : Ax + b \in \mathcal{K}\}$$ -->
-            this uniform scaling can be applied by simplying scaling the bias term with $Ax + \alpha b \in \mathcal{K}$.
             Given an attitude $Q \in \mathbf{SO}(3)$ and a position $\tilde{r} \in \mathbf{R}^3$, we can describe this set with some
             world frame vector $x \in \mathbf{R}^3$ as:
-            $$ AQ^T(x - \tilde{r}) + \alpha b \in \mathcal{K}.$$ 
+            $$ AQ^T(x - \tilde{r}) + {\color{red}{\alpha}} b \in \mathcal{K}.$$ 
 
-            This set can then be translated about a line segment, namely the line segment from 
-            $r(\tau = 0)$ to $r(\tau = 1)$ with the following:
+            This set can then be translated about a line segment with a normalized time parameter ${\color{blue}{\tau}} \in [0,1]$, where the position starts
+            at $r^{(-)}$ and ends at $r^{(+)}$:
 
-            $$ r(\tau) = \tau r^{(-)} + (1 - \tau)r^{(+)} $$
+            $$ r({\color{blue}{\tau}}) = {\color{blue}{\tau}} r^{(-)} + (1 - {\color{blue}{\tau}})r^{(+)} $$
 
             With this, we can solve for the continuous collision information with the following optimization problem:
             $$
                 \begin{align}
-                \min_{x, \alpha, \tau} \quad & \alpha \nonumber \\
-                \text{st} \quad & A_1Q_1^T(x - \tilde{r}_i) + \alpha b_i \in \mathcal{K}_i,  & \quad i = 1, 2 \nonumber \\
-                & \tilde{r_i} = \tau r_i^{(-)} + (1 - \tau)r_i^{(+)}, & \quad i = 1, 2 \nonumber
+                \min_{x, {\color{red}{\alpha}}, {\color{blue}{\tau}}} \quad & {\color{red}{\alpha}} \nonumber \\
+                \text{st} \quad & A_1Q_1^T(x - \tilde{r}_i) + {\color{red}{\alpha}} b_i \in \mathcal{K}_i,  & \quad i = 1, 2 \nonumber \\
+                & \tilde{r_i} = {\color{blue}{\tau}} r_i^{(-)} + (1 - {\color{blue}{\tau}})r_i^{(+)}, & \quad i = 1, 2 \nonumber \\ 
+                & {\color{red}{\alpha}} \geq 0 \nonumber \\ 
+                & 0 \leq  {\color{blue}{\tau}} \leq 1 \nonumber
                 \end{align}
             $$
-            which is small, convex, and fully differentiable.
-
+            which is a small convex optimization problem. If the optimal (minimum) scaling parameter ${\color{red}{\alpha}}$ is less than 1, then the two sets are in collision.
+            If this parameter is greater than 1, the two sets are not in collision. This optimization problem is indifferent to penetration, has no degenerate cases, and is fully differentiable with differentiable optimization techniques.
           </p>
         </div>
         <!-- <center>
@@ -267,6 +273,45 @@
       </div>
     </div>
     <br>
+    <br>
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Differentiable Optimization</h2>
+        <div class="content has-text-justified">
+          <p>
+            In order to differentiate our collision detection problem with respect to the 
+            configurations/geometry of the two objects,
+            we use a clever differentiable optimization technique. 
+          </p>
+          <p>
+            An arbitrary (not necessarily convex) optimization problem of the following form:
+            $$
+                \begin{align}
+                \min_{y} \quad & f_\theta(y) \nonumber \\
+                \text{st} \quad & c_\theta(y) \in \mathcal{K} \nonumber 
+                \end{align}
+            $$
+            is parameterized with problem parameters $\theta$. The Lagrangian of this problem is:
+            $$
+            \begin{align}
+            \mathcal{L}(y, \lambda) = f_\theta(y) + \lambda^Tc_\theta(y). \nonumber
+            \end{align}
+            $$
+            If we want the gradient of the optimal objective value $f(y^*)$ with respect to the problem parameters $\theta$, we simply 
+            need to calculate the gradient of the Lagrangian with respect to $\theta$ at the optimal primal-dual solution $(y^*, \lambda^*)$:
+            $$
+            \nabla_\theta f_\theta(y^*)= \nabla_\theta \mathcal{L}_\theta(y^*, \lambda^*),
+            $$
+            As shown in the continuous collision detection optimization problem above, the parameter 
+            we are concerned with, ${\color{red}{\alpha}}$, is the objective value of this problem. This means we can form smooth gradients of 
+            our continuous collision detection algorithm by simply taking a gradient of our Lagrangian function.
+          </p>
+        </div>
+        <!-- <center>
+          <img src="./static/images/cpu_gpu_scaling.png" alt="here is my description of the graph">
+        </center> -->
+      </div>
+    </div>
     <br>
     <br>
     <div class="container is-max-desktop">
@@ -279,13 +324,21 @@
           <section class="hero teaser">
             <div class="container is-max-desktop">
               <div class="hero-body">
+                <div class="content has-text-justified">
+                  <p>
+                    The proposed differentiable continuous collision detection routine is used in collision-avoidance
+                    motion planning, where we directly constrain the robot to avoid continuous collisions. This 
+                    results in bilevel optimization problems, where the upper level is a trajectory optimization problem, and the 
+                    constraints are continuous collision detection constraints. 
+                  </p>
+                </div>
                 <video autoplay muted controls loop width="100%" height="auto">
                   <source src="./static/videos/ballet.mp4" type="video/mp4">
                   Your browser does not support the video tag.
                 </video>
                 <!-- <img src=".static/videos/plugs.gif" alt="Your GIF Description"> -->
                 <h2 class="subtitle has-text-centered">
-                  
+                  A multi-robot assembly task where four robotic arms interact with a structure in a common workspace. The proposed continuous collision detection is used to certify collision-free trajectories and is fully differentiable with respect to the configurations of the robots.
                 </h2>
               </div>
             </div>
@@ -300,8 +353,7 @@
                 </video>
                 <!-- <img src=".static/videos/plugs.gif" alt="Your GIF Description"> -->
                 <h2 class="subtitle has-text-centered">
-                  Collision-avoidance with discrete collision detection (left) and continuous collision detection (right). These collision constraints are fully differentiable and work with of-the-shelf trajectory optimizers.
-                </h2>
+                  A polytope with position and attitude control navigates a field of moving obstacles. Differentiable continuous collision detection is used in a trajectory optimization to solve for the collision-free sequence.                </h2>
               </div>
             </div>
           </section>
